@@ -41,7 +41,7 @@ $ python basic_train.py
 ```
 You can also change the model and only use text or image features for training.
 ### Tensor Sketching model
-In this model, we add higher order correlation between text and image features to the network. We use tensor sketching to preserve the higher order correlation and also keep reasonable computation complexity. Reference paper is [Compact Bilinear Pooling](https://arxiv.org/abs/1511.06062). (We use DATA ONE) Run
+In this model, we add higher order correlation between text and image features to the network. We use tensor sketching to preserve the higher order correlation and also keep reasonable computation complexity. Reference paper is [Compact Bilinear Pooling](https://arxiv.org/abs/1511.06062). (We use DATA ONE) Please add thw two initializors in `add_init_function.py` to mxnet/python/mxnet/initializer.py and run
 ```
 $ python ts_train.py
 ```
