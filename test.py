@@ -6,7 +6,7 @@ import lstm_feature
 import time
 import argparse
 
-from dataiter import BucketVQAtrainIter, BucketVQAtestIter
+from dataiter import BucketVQAtestIter
 
 
 
