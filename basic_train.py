@@ -2,7 +2,6 @@ import mxnet as mx
 import numpy as np
 import codecs, json
 import os, h5py, sys, argparse
-import lstm_feature
 import time
 import argparse
 import logging
