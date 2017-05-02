@@ -6,7 +6,7 @@ import lstm_feature
 import time
 import argparse
 
-from dataiter import BucketVQAtestIter
+from dataiter import VQAtestIter
 
 
 
@@ -106,7 +106,7 @@ def test(args):
     current_imgs = img_feature[current_img_list,:] 
     print(current_imgs.shape)
     print(test_data['question'].shape)
-    data_test = BucketVQAtestIter(current_imgs,test_data['question'], args.batch_size, pad = 12, buckets=buckets,
+    data_test = VQAtestIter(current_imgs,test_data['question'], args.batch_size, pad = 12, buckets=buckets,
                                             layout=layout)
     sym, arg_params, aux_params = mx.model.load_checkpoint('vqa',200)
     mod = mx.mod.Module(symbol=sym, context=mx.gpu(0),data_names=['text','image'],
