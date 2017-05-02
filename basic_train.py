@@ -5,6 +5,7 @@ import os, h5py, sys, argparse
 import time
 import argparse
 import logging
+from dataiter import VQAtrainIter, VQAtrainIterText, VQAtrainIterImg
 
 parser = argparse.ArgumentParser(description="VQA",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -197,8 +198,9 @@ def train(args):
     eva_img = current_imgs[eva_idx,...]
     eva_que = train_data['question'][eva_idx,...]
     eva_ans = train_data['answers'][eva_idx,...]
-    data_train  = mx.rnn.BucketSentenceIter(train_img, train_que, train_ans, args.batch_size, buckets=buckets,layout=layout)
-    data_eva  = mx.rnn.BucketSentenceIter(eva_img, eva_que, eva_ans, args.batch_size, buckets=buckets,layout=layout)
+    #change t0 VQAtrainIterImg or VQAtrainIterText if onlu use image or text feature
+    data_train  = VQAtrainIter(train_img, train_que, train_ans, args.batch_size, buckets=buckets,layout=layout)
+    data_eva  = VQAtrainIter(eva_img, eva_que, eva_ans, args.batch_size, buckets=buckets,layout=layout)
     
     ################# MODULE #######################
     ###VQA model with MCB:based on https://arxiv.org/pdf/1606.01847.pdf
