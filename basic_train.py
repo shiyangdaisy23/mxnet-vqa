@@ -85,7 +85,7 @@ def get_data():
         train_data['length_q'] = np.array(tem)
         # total 82460 img
         tem = hf.get('img_pos_train')
-	  # convert into 0~82459
+        # convert into 0~82459
         train_data['img_list'] = np.array(tem)-1
         # answer is 1~1000
         tem = hf.get('answers')
@@ -133,9 +133,9 @@ def get_data_test():
         # quiestion id
         tem = hf.get('question_id_test')
         test_data['ques_id'] = np.array(tem)
-	# MC_answer_test
-	tem = hf.get('MC_ans_test')
-	test_data['MC_ans_test'] = np.array(tem)
+        # MC_answer_test
+        tem = hf.get('MC_ans_test')
+        test_data['MC_ans_test'] = np.array(tem)
 
 
     print('question aligning')
@@ -156,14 +156,14 @@ def eval_metrics():
 
 def evaluation_callback(iter_no, sym, arg, aux):
     if iter_no % 20 == 0:
-        mx.model.save_checkpoint('vqa_eva', iter_no, sym, arg, aux)
+        mx.model.save_checkpoint('network', iter_no, sym, arg, aux)
     if iter_no == 399:
-        mx.model.save_checkpoint('vqa_eva', iter_no, sym, arg, aux)
+        mx.model.save_checkpoint('network', iter_no, sym, arg, aux)
 ####### GLOBAL PARAMETERS ##############
 ## you can download from https://github.com/VT-vision-lab/VQA_LSTM_CNN Evaluation section ##
-input_img_h5 = '/home/ec2-user/workplace/VQA_LSTM_CNN/data_img.h5'
-input_ques_h5 = '/home/ec2-user/workplace/VQA_LSTM_CNN/data_prepro.h5'
-input_json = '/home/ec2-user/workplace/VQA_LSTM_CNN/data_prepro.json'
+input_img_h5 = '/home/ubuntu/mxnet-vqa/data/data_img.h5'
+input_ques_h5 = '/home/ubuntu/mxnet-vqa/data/data_prepro.h5'
+input_json = '/home/ubuntu/mxnet-vqa/data/data_prepro.json'
 img_norm = 1				# normalize the image feature. 1 = normalize, 0 = not normalize
 
 
@@ -250,7 +250,6 @@ def train(args):
     mod.bind(data_shapes=data_shapes, label_shapes = label_shapes)
     mod.init_params()
     mod.fit(data_train, data_eva, num_epoch=400, eval_metric=eval_metrics(),
-            #batch_end_callback=mx.callback.Speedometer(batch_size,20),
             epoch_end_callback= evaluation_callback)
 
 
