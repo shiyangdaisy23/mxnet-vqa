@@ -7,31 +7,7 @@ import bisect
 import random
 import numpy as np
 
-class VQAtrainIterText(DataIter):
-    """Simple bucketing iterator for language model.
-    Label for each step is constructed from data of
-    next step.
-
-    Parameters
-    ----------
-    sentences : list of list of int
-        encoded sentences
-    batch_size : int
-        batch_size of data
-    invalid_label : int, default -1
-        key for invalid label, e.g. <end-of-sentence>
-    dtype : str, default 'float32'
-        data type
-    buckets : list of int
-        size of data buckets. Automatically generated if None.
-    data_name : str, default 'data'
-        name of data
-    label_name : str, default 'softmax_label'
-        name of label
-    layout : str
-        format of data and label. 'NT' means (batch_size, length)
-        and 'TN' means (length, batch_size).
-    """
+class VQAtrainIterText(mx.io.DataIter):
     def __init__(self, img, sentences, answer, batch_size, buckets=None, invalid_label=-1,
                  text_name='text', img_name = 'image', label_name='softmax_label', dtype='float32',
                  layout='NTC'):
@@ -90,21 +66,15 @@ class VQAtrainIterText(DataIter):
 
     def reset(self):
         self.curr_idx = 0
-        #random.shuffle(self.idx)
-        #for buck in self.data:
-        #    np.random.shuffle(buck)
-
         self.nd_text = []
         self.nd_img = []
         self.ndlabel = []
         for buck in self.data:
             label = np.empty_like(buck.shape[0])
             label = self.answer
-            #label[:,-1] = buck[:, 1:]
-            #label[:, -1] = self.invalid_label
-            self.nd_text.append(ndarray.array(buck, dtype=self.dtype))
-            self.nd_img.append(ndarray.array(self.img, dtype=self.dtype))
-            self.ndlabel.append(ndarray.array(label, dtype=self.dtype))
+            self.nd_text.append(mx.ndarray.array(buck, dtype=self.dtype))
+            self.nd_img.append(mx.ndarray.array(self.img, dtype=self.dtype))
+            self.ndlabel.append(mx.ndarray.array(label, dtype=self.dtype))
 
     def next(self):
         if self.curr_idx == len(self.idx):
@@ -122,14 +92,6 @@ class VQAtrainIterText(DataIter):
             label = self.ndlabel[i][j:j+self.batch_size]
         
         data = [text]
-        '''
-        print('text')
-        print(text.asnumpy().shape)
-        print('answer')
-        print(label.asnumpy().shape)
-        print('image')
-        print(img.asnumpy().shape)
-        '''
         return mx.io.DataBatch(data, [label],
                          bucket_key=self.buckets[i],
                          provide_data=[(self.text_name, text.shape),(self.img_name, img.shape)],
@@ -138,31 +100,7 @@ class VQAtrainIterText(DataIter):
 
 
 
-class VQAtrainIterImg(DataIter):
-    """Simple bucketing iterator for language model.
-    Label for each step is constructed from data of
-    next step.
-
-    Parameters
-    ----------
-    sentences : list of list of int
-        encoded sentences
-    batch_size : int
-        batch_size of data
-    invalid_label : int, default -1
-        key for invalid label, e.g. <end-of-sentence>
-    dtype : str, default 'float32'
-        data type
-    buckets : list of int
-        size of data buckets. Automatically generated if None.
-    data_name : str, default 'data'
-        name of data
-    label_name : str, default 'softmax_label'
-        name of label
-    layout : str
-        format of data and label. 'NT' means (batch_size, length)
-        and 'TN' means (length, batch_size).
-    """
+class VQAtrainIterImg(mx.io.DataIter):
     def __init__(self, img, sentences, answer, batch_size, buckets=None, invalid_label=-1,
                  text_name='text', img_name = 'image', label_name='softmax_label', dtype='float32',
                  layout='NTC'):
@@ -221,21 +159,15 @@ class VQAtrainIterImg(DataIter):
 
     def reset(self):
         self.curr_idx = 0
-        #random.shuffle(self.idx)
-        #for buck in self.data:
-        #    np.random.shuffle(buck)
-
         self.nd_text = []
         self.nd_img = []
         self.ndlabel = []
         for buck in self.data:
             label = np.empty_like(buck.shape[0])
             label = self.answer
-            #label[:,-1] = buck[:, 1:]
-            #label[:, -1] = self.invalid_label
-            self.nd_text.append(ndarray.array(buck, dtype=self.dtype))
-            self.nd_img.append(ndarray.array(self.img, dtype=self.dtype))
-            self.ndlabel.append(ndarray.array(label, dtype=self.dtype))
+            self.nd_text.append(mx.ndarray.array(buck, dtype=self.dtype))
+            self.nd_img.append(mx.ndarray.array(self.img, dtype=self.dtype))
+            self.ndlabel.append(mx.ndarray.array(label, dtype=self.dtype))
 
     def next(self):
         if self.curr_idx == len(self.idx):
@@ -253,14 +185,6 @@ class VQAtrainIterImg(DataIter):
             label = self.ndlabel[i][j:j+self.batch_size]
         
         data = [img]
-        '''
-        print('text')
-        print(text.asnumpy().shape)
-        print('answer')
-        print(label.asnumpy().shape)
-        print('image')
-        print(img.asnumpy().shape)
-        '''
         return mx.io.DataBatch(data, [label],
                          bucket_key=self.buckets[i],
                          provide_data=[(self.text_name, text.shape),(self.img_name, img.shape)],
@@ -268,31 +192,7 @@ class VQAtrainIterImg(DataIter):
 
 
 
-class VQAtrainIter(DataIter):
-    """Simple bucketing iterator for language model.
-    Label for each step is constructed from data of
-    next step.
-
-    Parameters
-    ----------
-    sentences : list of list of int
-        encoded sentences
-    batch_size : int
-        batch_size of data
-    invalid_label : int, default -1
-        key for invalid label, e.g. <end-of-sentence>
-    dtype : str, default 'float32'
-        data type
-    buckets : list of int
-        size of data buckets. Automatically generated if None.
-    data_name : str, default 'data'
-        name of data
-    label_name : str, default 'softmax_label'
-        name of label
-    layout : str
-        format of data and label. 'NT' means (batch_size, length)
-        and 'TN' means (length, batch_size).
-    """
+class VQAtrainIter(mx.io.DataIter):
     def __init__(self, img, sentences, answer, batch_size, buckets=None, invalid_label=-1,
                  text_name='text', img_name = 'image', label_name='softmax_label', dtype='float32',
                  layout='NTC'):
@@ -351,21 +251,15 @@ class VQAtrainIter(DataIter):
 
     def reset(self):
         self.curr_idx = 0
-        #random.shuffle(self.idx)
-        #for buck in self.data:
-        #    np.random.shuffle(buck)
-
         self.nd_text = []
         self.nd_img = []
         self.ndlabel = []
         for buck in self.data:
             label = np.empty_like(buck.shape[0])
             label = self.answer
-            #label[:,-1] = buck[:, 1:]
-            #label[:, -1] = self.invalid_label
-            self.nd_text.append(ndarray.array(buck, dtype=self.dtype))
-            self.nd_img.append(ndarray.array(self.img, dtype=self.dtype))
-            self.ndlabel.append(ndarray.array(label, dtype=self.dtype))
+            self.nd_text.append(mx.ndarray.array(buck, dtype=self.dtype))
+            self.nd_img.append(mx.ndarray.array(self.img, dtype=self.dtype))
+            self.ndlabel.append(mx.ndarray.array(label, dtype=self.dtype))
 
     def next(self):
         if self.curr_idx == len(self.idx):
@@ -383,44 +277,12 @@ class VQAtrainIter(DataIter):
             label = self.ndlabel[i][j:j+self.batch_size]
         
         data = [text, img]
-        '''
-        print('text')
-        print(text.asnumpy().shape)
-        print('answer')
-        print(label.asnumpy().shape)
-        print('image')
-        print(img.asnumpy().shape)
-        '''
         return mx.io.DataBatch(data, [label],
                          bucket_key=self.buckets[i],
                          provide_data=[(self.text_name, text.shape),(self.img_name, img.shape)],
                          provide_label=[(self.label_name, label.shape)])
 
 class VQAtrainIterNew(mx.io.DataIter):
-    """Simple bucketing iterator for language model.
-    Label for each step is constructed from data of
-    next step.
-
-    Parameters
-    ----------
-    sentences : list of list of int
-        encoded sentences
-    batch_size : int
-        batch_size of data
-    invalid_label : int, default -1
-        key for invalid label, e.g. <end-of-sentence>
-    dtype : str, default 'float32'
-        data type
-    buckets : list of int
-        size of data buckets. Automatically generated if None.
-    data_name : str, default 'data'
-        name of data
-    label_name : str, default 'softmax_label'
-        name of label
-    layout : str
-        format of data and label. 'NT' means (batch_size, length)
-        and 'TN' means (length, batch_size).
-    """
     def __init__(self, img_id, sentences, answer, batch_size, IMG_PATH, buckets=None, invalid_label=-1,
                  text_name='text', img_name = 'image', label_name='softmax_label', dtype='float32',
                  layout='NTC'):
@@ -480,18 +342,12 @@ class VQAtrainIterNew(mx.io.DataIter):
 
     def reset(self):
         self.curr_idx = 0
-        #random.shuffle(self.idx)
-        #for buck in self.data:
-        #    np.random.shuffle(buck)
-
         self.nd_text = []
         self.nd_img = []
         self.ndlabel = []
         for buck in self.data:
             label = np.empty_like(buck.shape[0])
             label = self.answer
-            #label[:,-1] = buck[:, 1:]
-            #label[:, -1] = self.invalid_label
             self.nd_text.append(mx.ndarray.array(buck, dtype=self.dtype))
             self.nd_img.append(mx.ndarray.array(self.img_id, dtype=self.dtype))
             self.ndlabel.append(mx.ndarray.array(label, dtype=self.dtype))
@@ -530,14 +386,6 @@ class VQAtrainIterNew(mx.io.DataIter):
         
         
         data = [text, img]
-        '''
-        print('text')
-        print(text.asnumpy().shape)
-        print('answer')
-        print(label.asnumpy().shape)
-        print('image')
-        print(img.asnumpy().shape)
-        '''
         return mx.io.DataBatch(data, [label],
                          bucket_key=self.buckets[i],
                          provide_data=[(self.text_name, text.shape),(self.img_name, img.shape)],
@@ -545,30 +393,6 @@ class VQAtrainIterNew(mx.io.DataIter):
 
 
 class VQAtestIter(mx.io.DataIter):
-    """Simple bucketing iterator for language model.
-    Label for each step is constructed from data of
-    next step.
-
-    Parameters
-    ----------
-    sentences : list of list of int
-        encoded sentences
-    batch_size : int
-        batch_size of data
-    invalid_label : int, default -1
-        key for invalid label, e.g. <end-of-sentence>
-    dtype : str, default 'float32'
-        data type
-    buckets : list of int
-        size of data buckets. Automatically generated if None.
-    data_name : str, default 'data'
-        name of data
-    label_name : str, default 'softmax_label'
-        name of label
-    layout : str
-        format of data and label. 'NT' means (batch_size, length)
-        and 'TN' means (length, batch_size).
-    """
     def __init__(self, img, sentences, batch_size, pad = 0, buckets=None, invalid_label=-1,
                  text_name='text', img_name = 'image', dtype='float32',
                  layout='NTC'):
@@ -606,11 +430,9 @@ class VQAtestIter(mx.io.DataIter):
         if self.major_axis == 0:
             self.provide_data = [(text_name, (batch_size, self.default_bucket_key)),
                                  (img_name, (batch_size, self.default_bucket_key))]
-            #self.provide_label = [(label_name, (batch_size, self.default_bucket_key))]
         elif self.major_axis == 1:
             self.provide_data = [(text_name, (self.default_bucket_key, batch_size)),
                                  (img_name, (self.default_bucket_key, batch_size))]
-            #self.provide_label = [(label_name, (self.default_bucket_key, batch_size))]
         else:
             raise ValueError("Invalid layout %s: Must by NT (batch major) or TN (time major)")
 
@@ -623,30 +445,11 @@ class VQAtestIter(mx.io.DataIter):
 
     def reset(self):
         self.curr_idx = 0
-        #random.shuffle(self.idx)
-        #for buck in self.data:
-        #    np.random.shuffle(buck)
-
         self.nd_text = []
         self.nd_img = []
-        #self.ndlabel = []
         for buck in self.data:
-            #label = np.empty_like(buck.shape[0])
-            #label = self.answer
-            #label[:,-1] = buck[:, 1:]
-            #label[:, -1] = self.invalid_label
             self.nd_text.append(mx.ndarray.array(buck, dtype=self.dtype))
             self.nd_img.append(mx.ndarray.array(self.img, dtype=self.dtype))
-            #self.ndlabel.append(mx.ndarray.array(label, dtype=self.dtype))
-        '''
-        if self.pad !=0:
-            print(self.nd_text[0].shape)
-            print(self.data[0].shape[1])
-            print(self.img.shape[1])
-            self.nd_text[0] = mx.nd.concatenate([self.nd_text[0],mx.ndarray.array(np.zeros((self.batch_size-self.pad,self.data[0].shape[1])))])
-            self.nd_img = mx.nd.concatenate([self.nd_img[0],mx.ndarray.array(np.zeros((self.batch_size-self.pad,self.img.shape[1])))])
-            print(self.nd_text[0].shape)
-        '''
 
     def next(self):
         pad_tmp = 0
@@ -654,29 +457,14 @@ class VQAtestIter(mx.io.DataIter):
             raise StopIteration
         i, j = self.idx[self.curr_idx]
         self.curr_idx += 1
-        '''
-        if self.curr_idx == len(self.idx)-1:
-            print(len(self.idx))
-            #self.batch_size = self.pad
-            pad_tmp = self.batch_size - self.pad
-        '''    
+           
         if self.major_axis == 1:
             img = self.nd_img[i][j:j + self.batch_size].T
             text = self.nd_text[i][j:j + self.batch_size].T
-            #label = self.ndlabel[i][j:j+self.batch_size]
         else:
             img = self.nd_img[i][j:j + self.batch_size]
             text = self.nd_text[i][j:j + self.batch_size]
-            #label = self.ndlabel[i][j:j+self.batch_size]
         
         data = [text, img]
-        '''
-        print('text')
-        print(text.asnumpy().shape)
-        print('answer')
-        print(label.asnumpy().shape)
-        print('image')
-        print(img.asnumpy().shape)
-        '''
         return mx.io.DataBatch(data, label = None, pad = pad_tmp, bucket_key=self.buckets[i],
                          provide_data=[(self.text_name, text.shape),(self.img_name, img.shape)])
